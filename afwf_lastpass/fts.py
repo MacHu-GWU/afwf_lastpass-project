@@ -53,6 +53,7 @@ def rebuild_name_index(
     if name_list is None:
         return
 
+    dir_name_index.remove_if_exists()
     index = get_index(dir_index, password_name_schema, reset=True)
     with index.writer(limitmb=128) as writer:
         for name in name_list:

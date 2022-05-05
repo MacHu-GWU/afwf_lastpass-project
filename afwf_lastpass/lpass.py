@@ -88,6 +88,17 @@ class BankAccounts(enum.Enum):
     notes = "Notes"
 
 
+_sensitive_fields = [
+    PasswordForm.password,
+    PaymentCardForm.number,
+    PaymentCardForm.security_code,
+    BankAccounts.account_type,
+    BankAccounts.pin,
+]
+
+sensitive_fields = set([i.value for i in _sensitive_fields])
+
+
 def parse_output(name: str, output: str) -> dict:
     data = dict()
 
@@ -126,8 +137,27 @@ def show(name: str) -> dict:
 
 
 def parse_name_txt(path: Path = path_name_txt) -> List[str]:
-    return [
+    return list(set([
         line.strip()
         for line in path.read_text().strip().split("\n")
         if line.strip()
-    ]
+    ]))
+
+
+def password_name_to_item(name: str) -> List[afwf.Item]:
+    data = show(name)
+    item_list = list()
+    for k, v in data.items():
+        if k in sensitive_fields:
+            title = f"{k}: ***"
+        else:
+            title = f"{k}: ***"
+        item = afwf.Item(
+            title=title,
+            subtitle="",
+            icon=afwf.Icon.from_image_file(afwf.Icons.check)
+        )
+        if k == PasswordForm.url.value:
+            item.open_url(url=v)
+        item_list.append(item)
+    return item_list

@@ -15,16 +15,16 @@ dir_project_root="$(dirname "${dir_bin}")"
 #-----------------------------------------------------------------------------
 # Your python alfred workflow has to be a package styled python library
 # Put the package import name here
-package_name="afwf_github"
+package_name="afwf_lastpass"
 
 # This is the directory absolute path of your Alfred Workflow
 # Please update it manually, you can use this method to find it
 # Right click your workflow in Alfred Workflow view, then click "open in finder"
-dir_workflow="/Users/sanhehu/Documents/Alfred-Preferences/Alfred.alfredpreferences/workflows/user.workflow.E237FE68-2920-4713-BBE7-22BDFB6718FE"
+dir_workflow="/Users/sanhehu/Documents/Alfred-Preferences/Alfred.alfredpreferences/workflows/user.workflow.F26C1703-A6E0-422B-8804-744CD6DD6A29"
 
 # This is your development python virtual environment path
 # It should have a "./bin" folder in it and "./bin/activate", "./bin/activate" files
-dir_venv="/Users/sanhehu/venvs/python/3.8.11/afwf_github_venv"
+dir_venv="/Users/sanhehu/venvs/python/3.8.11/afwf_lastpass_venv"
 
 # Don't touch this
 package_version="$(python ${dir_project_root}/${package_name}/_version.py)"
