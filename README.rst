@@ -54,6 +54,12 @@ Welcome to ``afwf_lastpass`` Documentation
 
 Documentation for ``afwf_lastpass``.
 
+    # Create afwf_lasspass folder
+    mkdir ~/.alfred-afwf_lastpass
+
+    # export all lastpass password name for building the search index
+    lpass export --fields=name > ~/.alfred-afwf_lastpass/name.txt
+
 
 .. _install:
 

@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from typing import List
 import enum
 import subprocess
-from rich import print
+
+import afwf
+from pathlib_mate import Path
+
+from .paths import path_name_txt
 
 
 class PasswordForm(enum.Enum):
@@ -83,7 +88,7 @@ class BankAccounts(enum.Enum):
     notes = "Notes"
 
 
-def parse(name: str, output: str) -> dict:
+def parse_output(name: str, output: str) -> dict:
     data = dict()
 
     lines = output.split("\n")
@@ -117,12 +122,12 @@ def show(name: str) -> dict:
     response = subprocess.check_output([
         "lpass", "show", name,
     ]).decode("utf-8")
-    return parse(name, response)
+    return parse_output(name, response)
 
-# name = "2022 Senaca Accenture Contract Timesheet"
-# name = "aws/aws-data-lab-sanhe/sanhe"
-# name = "Bluevine Business Checking Account"
-# name = "Anthem HSA"
 
-# data = show(name)
-# print(data)
+def parse_name_txt(path: Path = path_name_txt) -> List[str]:
+    return [
+        line.strip()
+        for line in path.read_text().strip().split("\n")
+        if line.strip()
+    ]
