@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
+from typing import List, Dict
 import os
 import enum
+import json
 import subprocess
 
 import afwf
@@ -20,6 +21,8 @@ class PasswordForm(enum.Enum):
     fullname = "fullname"
     username = "username"
     password = "password"
+    username_field = "username-field"
+    password_field = "password-field"
     url = "URL"
     notes = "Notes"
 
@@ -92,6 +95,47 @@ class BankAccounts(enum.Enum):
     notes = "Notes"
 
 
+class DriversLicenseForm(enum.Enum):
+    height = "Height"
+    sex = "Sex"
+    birth = "Birth"
+    country = "Country"
+    code = "Code"
+    state = "State"
+    town = "Town"
+    address = "Address"
+    name = "Name"
+    class_ = "Class"
+    date = "Date"
+    number = "Number"
+    language = "Language"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
+class PassportForm(enum.Enum):
+    expiration_date = "Expiration Date"
+    issued_date = "Issued Date"
+    date_of_birth = "Date of Birth"
+    issuing_authority = "Issuing Authority"
+    nationality = "Nationality"
+    sex = "Sex"
+    number = "Number"
+    country = "Country"
+    name = "Name"
+    type = "Type"
+    language = "Language"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
+class SSNForm(enum.Enum):
+    number = "Number"
+    name = "Name"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
 class DatabaseForm(enum.Enum):
     name = "name"
     folder = "folder"
@@ -136,7 +180,7 @@ class SSHForm(enum.Enum):
     notes = "Notes"
 
 
-class SoftwareLicense(enum.Enum):
+class SoftwareLicenseForm(enum.Enum):
     name = "name"
     folder = "folder"
     fullname = "fullname"
@@ -167,7 +211,7 @@ def mask_bank_account_number(v) -> str:
     return f"{v[::3]}***{v[-3::]}"
 
 
-sensitive_fields = {
+sensitive_fields: dict = {
     PasswordForm.password.value: mask_password,
     PaymentCardForm.number.value: mask_card_number,
     PaymentCardForm.security_code.value: mask_password,
@@ -176,6 +220,21 @@ sensitive_fields = {
     DatabaseForm.password.value: mask_password,
     SSHForm.private_key.value: mask_password,
 }
+
+_all_fields = []
+_all_fields.extend([v.value for v in PasswordForm.__members__.values()])
+_all_fields.extend([v.value for v in SecureNoteForm.__members__.values()])
+_all_fields.extend([v.value for v in AddressForm.__members__.values()])
+_all_fields.extend([v.value for v in PaymentCardForm.__members__.values()])
+_all_fields.extend([v.value for v in BankAccounts.__members__.values()])
+_all_fields.extend([v.value for v in DriversLicenseForm.__members__.values()])
+_all_fields.extend([v.value for v in PassportForm.__members__.values()])
+_all_fields.extend([v.value for v in SSNForm.__members__.values()])
+_all_fields.extend([v.value for v in DatabaseForm.__members__.values()])
+_all_fields.extend([v.value for v in ServerForm.__members__.values()])
+_all_fields.extend([v.value for v in SSHForm.__members__.values()])
+_all_fields.extend([v.value for v in SoftwareLicenseForm.__members__.values()])
+all_fields = set(_all_fields)
 
 
 def parse_output(name: str, output: str) -> dict:
@@ -186,19 +245,27 @@ def parse_output(name: str, output: str) -> dict:
     fullname = lines[0].split("[id")[0].strip()
     folder = fullname[::-1].replace(name[::-1], "")[::-1]
 
-    data["name"] = name
-    data["folder"] = folder
-    data["fullname"] = fullname
+    data["name"] = [name, ]
+    data["folder"] = [folder, ]
+    data["fullname"] = [fullname, ]
 
+    previous_key = ""
+    data[""] = []
     for line in lines[1:]:
-        try:
+        if ": " in line:
             key, value = line.split(": ", 1)
-            data[key.strip()] = value.strip()
-        except:
-            pass
+            key, value = key.strip(), value
+            if key in all_fields:
+                data[key] = [value, ]
+                previous_key = key
+            else:
+                data[previous_key].append(line)
+        else:
+            data[previous_key].append(line)
+    _ = data.pop("")
 
     processed_data = {
-        k: v
+        k: "\n".join(v)
         for k, v in data.items()
         if not (
             (k.lower() in data) and (k.lower() != k)
