@@ -7,15 +7,20 @@ import subprocess
 import afwf
 from pathlib_mate import Path
 
-from .paths import path_name_txt
+from .paths import path_name_txt, path_lastpass_cli, path_lastpass_icon
+
+if path_lastpass_cli.exists():
+    lasspass_cli = path_lastpass_cli.read_text().strip()
+else:
+    lasspass_cli = "lpass"
 
 
 class PasswordForm(enum.Enum):
     name = "name"
     folder = "folder"
     fullname = "fullname"
-    username = "Username"
-    password = "Password"
+    username = "username"
+    password = "password"
     url = "URL"
     notes = "Notes"
 
@@ -88,15 +93,90 @@ class BankAccounts(enum.Enum):
     notes = "Notes"
 
 
-_sensitive_fields = [
-    PasswordForm.password,
-    PaymentCardForm.number,
-    PaymentCardForm.security_code,
-    BankAccounts.account_type,
-    BankAccounts.pin,
-]
+class DatabaseForm(enum.Enum):
+    name = "name"
+    folder = "folder"
+    fullname = "fullname"
+    username = "Username"
+    password = "Password"
+    alias = "Alias"
+    sid = "SID"
+    database = "Database"
+    port = "Port"
+    hostname = "Hostname"
+    type = "Type"
+    note_type = "NoteType"
+    notes = "Notes"
 
-sensitive_fields = set([i.value for i in _sensitive_fields])
+
+class ServerForm(enum.Enum):
+    name = "name"
+    folder = "folder"
+    fullname = "fullname"
+    username = "Username"
+    password = "Password"
+    hostname = "Hostname"
+    language = "Language"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
+class SSHForm(enum.Enum):
+    name = "name"
+    folder = "folder"
+    fullname = "fullname"
+    date = "Date"
+    hostname = "Hostname"
+    public_key = "Public Key"
+    private_key = "Private Key"
+    passphrase = "Passphrase"
+    format = "Format"
+    bit_strength = "Bit Strength"
+    language = "Language"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
+class SoftwareLicense(enum.Enum):
+    name = "name"
+    folder = "folder"
+    fullname = "fullname"
+    order_total = "Order_Total"
+    number_of_licenses = "Number_of_Licenses"
+    order_number = "Order_Number"
+    purchase_date = "Purchase_Date"
+    price = "Price"
+    website = "Website"
+    support_email = "Support_Email"
+    publisher = "Publisher"
+    version = "Version"
+    licensee = "Licensee"
+    license_key = "License_Key"
+    note_type = "NoteType"
+    notes = "Notes"
+
+
+def mask_password(v) -> str:
+    return "***"
+
+
+def mask_card_number(v) -> str:
+    return f"***{v[-4::]}"
+
+
+def mask_bank_account_number(v) -> str:
+    return f"{v[::3]}***{v[-3::]}"
+
+
+sensitive_fields = {
+    PasswordForm.password.value: mask_password,
+    PaymentCardForm.number.value: mask_card_number,
+    PaymentCardForm.security_code.value: mask_password,
+    BankAccounts.account_number.value: mask_bank_account_number,
+    BankAccounts.pin.value: mask_password,
+    DatabaseForm.password.value: mask_password,
+    SSHForm.private_key.value: mask_password,
+}
 
 
 def parse_output(name: str, output: str) -> dict:
@@ -131,7 +211,7 @@ def parse_output(name: str, output: str) -> dict:
 
 def show(name: str) -> dict:
     response = subprocess.check_output([
-        "lpass", "show", name,
+        lasspass_cli, "show", name,
     ]).decode("utf-8")
     return parse_output(name, response)
 
@@ -149,13 +229,15 @@ def password_name_to_item(name: str) -> List[afwf.Item]:
     item_list = list()
     for k, v in data.items():
         if k in sensitive_fields:
-            title = f"{k}: ***"
+            title = f"{k}: {sensitive_fields[k](v)}"
         else:
-            title = f"{k}: ***"
+            title = f"{k}: {v}"
         item = afwf.Item(
             title=title,
             subtitle="",
-            icon=afwf.Icon.from_image_file(afwf.Icons.check)
+            autocomplete=f"{name}@@{k}",
+            arg=v,
+            icon=afwf.Icon.from_image_file(path_lastpass_icon.abspath)
         )
         if k == PasswordForm.url.value:
             item.open_url(url=v)
