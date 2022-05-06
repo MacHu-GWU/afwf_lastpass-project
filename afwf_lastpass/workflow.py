@@ -7,12 +7,12 @@ workflow handler register.
 import afwf
 from .hdl import (
     password,
-    rebuild_index,
-    rebuild_index_action,
+    build_index,
+    build_index_action,
 )
 
 wf = afwf.Workflow()
 wf.register(password.handler)
-wf.register(rebuild_index.handler)
-wf.register(rebuild_index_action.handler)
+wf.register(build_index.handler)
+wf.register(build_index_action.handler)
 

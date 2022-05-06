@@ -6,7 +6,8 @@ import attr
 import afwf
 
 from ..fts import search_name
-from ..lpass import password_name_to_item
+from ..lpass import password_name_to_items
+from ..fuzzy_filter import FuzzyObjectSearch
 
 
 @attr.define
@@ -29,9 +30,15 @@ class Handler(afwf.Handler):
             password_name, field = query.split("@@", 1)
             field = field.strip()
             if field:
-                pass
+                item_list = password_name_to_items(password_name)
+                fzy = FuzzyObjectSearch(
+                    keys=[item.variables["field"] for item in item_list],
+                    mapper={item.variables["field"]: item for item in item_list},
+                )
+                for item in fzy.match(field, limit=20):
+                    sf.items.append(item)
             else:
-                item_list = password_name_to_item(password_name)
+                item_list = password_name_to_items(password_name)
                 for item in item_list:
                     sf.items.append(item)
 

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
+import os
 import enum
 import subprocess
 
 import afwf
 from pathlib_mate import Path
 
-from .paths import path_name_txt, path_lastpass_cli, path_lastpass_icon
-
-if path_lastpass_cli.exists():
-    lasspass_cli = path_lastpass_cli.read_text().strip()
-else:
-    lasspass_cli = "lpass"
+from .paths import (
+    lasspass_cli,
+    path_name_txt, path_lastpass_icon,
+)
 
 
 class PasswordForm(enum.Enum):
@@ -224,7 +223,7 @@ def parse_name_txt(path: Path = path_name_txt) -> List[str]:
     ]))
 
 
-def password_name_to_item(name: str) -> List[afwf.Item]:
+def password_name_to_items(name: str) -> List[afwf.Item]:
     data = show(name)
     item_list = list()
     for k, v in data.items():
@@ -237,8 +236,29 @@ def password_name_to_item(name: str) -> List[afwf.Item]:
             subtitle="",
             autocomplete=f"{name}@@{k}",
             arg=v,
-            icon=afwf.Icon.from_image_file(path_lastpass_icon.abspath)
+            icon=afwf.Icon.from_image_file(path_lastpass_icon.abspath),
+            variables={"field": k},
         )
+        # Since name is always on top, add special functionality to it
+        if k == PasswordForm.name.value:
+            if PasswordForm.password.value in data:
+                arg = data[PasswordForm.password.value]
+            elif SecureNoteForm.notes.value in data:
+                arg = data[SecureNoteForm.notes.value]
+            elif DatabaseForm.password.value in data:
+                arg = data[SecureNoteForm.notes.value]
+            else:
+                arg = v
+            item.add_modifier(
+                mod=afwf.ModEnum.cmd.value,
+                subtitle="hit 'Enter' to enter the secrets",
+                arg=arg,
+            )
+            item.add_modifier(
+                mod=afwf.ModEnum.alt.value,
+                subtitle="hit 'Enter' to copy the secrets",
+                arg=arg,
+            )
         if k == PasswordForm.url.value:
             item.open_url(url=v)
         item_list.append(item)

@@ -61,6 +61,11 @@ Documentation for ``afwf_lastpass``.
     lpass export --fields=name > ~/.alfred-afwf_lastpass/name.txt
 
 
+How it Work
+------------------------------------------------------------------------------
+last
+
+
 .. _install:
 
 Install

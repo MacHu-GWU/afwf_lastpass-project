@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from afwf_lastpass.hdl.rebuild_index_action import handler
+from afwf_lastpass.hdl.build_index_action import handler
 
 
 def test_handler():
