@@ -23,3 +23,4 @@ toml==0.10.2
 urllib3==1.26.9
 whoosh==2.7.4
 wrapt==1.14.0
+loguru==0.6.0
