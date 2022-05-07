@@ -10,8 +10,9 @@ from pathlib_mate import Path
 
 from .paths import (
     lasspass_cli,
-    path_name_txt, path_lastpass_icon,
+    path_name_txt,
 )
+from . import images
 
 
 class PasswordForm(enum.Enum):
@@ -307,7 +308,7 @@ def password_name_to_items(name: str) -> List[afwf.Item]:
             subtitle="",
             autocomplete=f"{name}@@{k}",
             arg=v,
-            icon=afwf.Icon.from_image_file(path_lastpass_icon.abspath),
+            icon=afwf.Icon.from_image_file(images.lastpass),
             variables={"field": k},
         )
         # Since name is always on top, add special functionality to it

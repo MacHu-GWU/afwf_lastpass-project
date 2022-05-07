@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from pytest import raises, approx
 from afwf_lastpass.hdl.password import handler
 
 class TestHandler:
     def test(self):
-        # sf = handler.handler(query="aws/aws-data-lab-sanhe/sanhe")
-
+        sf = handler.handler(query="aws/aws-data-lab-sanhe/sanhe")
         sf = handler.handler(query="aws/aws-data-lab-sanhe/sanhe@@")
 
 

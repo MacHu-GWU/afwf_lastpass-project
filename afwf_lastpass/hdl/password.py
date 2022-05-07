@@ -7,6 +7,7 @@ from ..fts import search_name
 from ..lpass import password_name_to_items
 from ..fuzzy_filter import FuzzyObjectSearch
 from ..logger import logger
+from .. import images
 
 
 @attr.define
@@ -23,6 +24,7 @@ class Handler(afwf.Handler):
         if not query:
             sf.items.append(afwf.Item(
                 title="Type to search lastpass ...",
+                icon=afwf.Icon.from_image_file(images.lastpass),
             ))
             return sf
 
@@ -55,6 +57,7 @@ class Handler(afwf.Handler):
                         title=name,
                         autocomplete=name + "@@",
                         arg=name,
+                        icon=afwf.Icon.from_image_file(images.lastpass),
                     )
                     sf.items.append(item)
         return sf

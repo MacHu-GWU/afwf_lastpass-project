@@ -16,7 +16,6 @@ dir_project_root = dir_here.parent
 dir_cache_for_test = Path(dir_project_root, "tests", ".cache")
 dir_name_index_for_test = Path(dir_project_root, "tests", "name_index")
 path_name_txt_for_test = Path(dir_project_root, "tests", "name.txt")
-path_lastpass_icon = Path(dir_here, "lastpass-icon.png")
 
 dir_alfred_workflow.mkdir_if_not_exists()
 
