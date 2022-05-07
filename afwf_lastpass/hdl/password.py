@@ -41,7 +41,6 @@ class Handler(afwf.Handler):
                 item_list = password_name_to_items(password_name)
                 for item in item_list:
                     sf.items.append(item)
-
         else:
             doc_list = search_name(q=query)
             if len(doc_list) == 0:

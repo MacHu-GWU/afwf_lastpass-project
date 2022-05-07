@@ -1,4 +1,3 @@
-
 .. image:: https://readthedocs.org/projects/afwf_lastpass/badge/?version=latest
     :target: https://afwf_lastpass.readthedocs.io/index.html
     :alt: Documentation Status
@@ -51,34 +50,30 @@
 
 Welcome to ``afwf_lastpass`` Documentation
 ==============================================================================
-
-Documentation for ``afwf_lastpass``.
-
-    # Create afwf_lasspass folder
-    mkdir ~/.alfred-afwf_lastpass
-
-    # export all lastpass password name for building the search index
-    lpass export --fields=name > ~/.alfred-afwf_lastpass/name.txt
+Documentation for ``afwf_lastpass``. See README_cn.rst for better doc
 
 
 How it Work
 ------------------------------------------------------------------------------
-last
+`lastpass has a CLI interface <https://github.com/lastpass/lastpass-cli>`_ allow you to securely login, and retrieve lastpass data.
 
 
-.. _install:
-
-Install
+How to Use
 ------------------------------------------------------------------------------
+- All lastpass item including "Password with URL", "Secure Note", "Driver's License" are just a Form having a field called ``name``
+- First, you **SEARCH** the lastpass item based on ``name``, it support full text search, ngram search
+- Second, once you locate an item, then you can do **ACTION** like, enter the password, copy the value of the form, open URL in browser.
 
-``afwf_lastpass`` is released on PyPI, so all you need is:
+How to SEARCH::
 
-.. code-block:: console
+1. call out Alfred input box, and enter the keyword ``pw``, then enter ``pw {query}`` to search
+2. select the desired item using mouse or ``up``, ``down``, then hit 'Tab' to lock this item. Once you lock the item, then you can take action.
 
-    $ pip install afwf_lastpass
+How to do ACTION::
 
-To upgrade to latest version:
-
-.. code-block:: console
-
-    $ pip install --upgrade afwf_lastpass
+1. by default, the ``name`` field is always on top.
+2. Hit 'Enter': type the secret at current focus cursor. The secret is different based on
+3. Hit 'CMD + Enter': copy the secret to clipboard
+4. Hit 'Alt (Option) + Enter': open the URL in browser (if available)
+5. type more to select different field
+6. if you are on field other than ``name``, you can hit 'Ctrl + C' to copy the value to clipboard.
