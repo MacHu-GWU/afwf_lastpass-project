@@ -23,6 +23,8 @@ Release and Version History
 
 **Bugfixes**
 
+- fix bug that the logger should NEVER log to standard out stream
+
 **Miscellaneous**
 
 

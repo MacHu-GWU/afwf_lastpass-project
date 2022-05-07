@@ -228,7 +228,7 @@
 	<key>createdby</key>
 	<string>Sanhe Hu</string>
 	<key>description</key>
-	<string>GitHub Alfred Workflow</string>
+	<string>Python Lastpass Alfred Workflow</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -484,7 +484,7 @@
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>escaping</key>
 				<integer>68</integer>
 				<key>keyword</key>
@@ -512,7 +512,7 @@
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -709,7 +709,7 @@ end run</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string>See full documentation at https://github.com/MacHu-GWU/afwf_github-project</string>
+	<string>See full documentation at https://github.com/MacHu-GWU/afwf_lastpass-project</string>
 	<key>uidata</key>
 	<dict>
 		<key>049A5C80-5423-4582-9F9A-1FE8328C0DF1</key>
@@ -856,7 +856,7 @@ end run</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>0.0.2</string>
+	<string>0.0.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/MacHu-GWU/afwf_lastpass-project</string>
 </dict>
