@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Dict, Iterable
-
 import attr
 import afwf
 
 from ..fts import search_name
 from ..lpass import password_name_to_items
 from ..fuzzy_filter import FuzzyObjectSearch
+from ..logger import logger
 
 
 @attr.define
@@ -18,6 +17,7 @@ class Handler(afwf.Handler):
         :param kwargs:
         :return:
         """
+        logger.info(f"received query: {query!r}")
         sf = afwf.ScriptFilter()
         query = query.strip()
         if not query:

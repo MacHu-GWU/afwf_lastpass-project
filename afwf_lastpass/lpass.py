@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Dict
-import os
+from typing import List
 import enum
-import json
 import subprocess
+from collections import OrderedDict
 
 import afwf
 from pathlib_mate import Path
@@ -213,10 +212,12 @@ def mask_bank_account_number(v) -> str:
 
 sensitive_fields: dict = {
     PasswordForm.password.value: mask_password,
+    PasswordForm.password_field.value: mask_password,
     PaymentCardForm.number.value: mask_card_number,
     PaymentCardForm.security_code.value: mask_password,
     BankAccounts.account_number.value: mask_bank_account_number,
     BankAccounts.pin.value: mask_password,
+    DriversLicenseForm.number.number: mask_bank_account_number,
     DatabaseForm.password.value: mask_password,
     SSHForm.private_key.value: mask_password,
 }
@@ -238,7 +239,10 @@ all_fields = set(_all_fields)
 
 
 def parse_output(name: str, output: str) -> dict:
-    data = dict()
+    """
+    'name' is always the first field
+    """
+    data = OrderedDict()
 
     lines = output.split("\n")
 
@@ -264,13 +268,13 @@ def parse_output(name: str, output: str) -> dict:
             data[previous_key].append(line)
     _ = data.pop("")
 
-    processed_data = {
-        k: "\n".join(v)
+    processed_data = OrderedDict([
+        (k, "\n".join(v))
         for k, v in data.items()
         if not (
             (k.lower() in data) and (k.lower() != k)
         )
-    }
+    ])
 
     return processed_data
 
@@ -295,9 +299,9 @@ def password_name_to_items(name: str) -> List[afwf.Item]:
     item_list = list()
     for k, v in data.items():
         if k in sensitive_fields:
-            title = f"{k}: {sensitive_fields[k](v)}"
+            title = f"{k} = {sensitive_fields[k](v)}"
         else:
-            title = f"{k}: {v}"
+            title = f"{k} = {v}"
         item = afwf.Item(
             title=title,
             subtitle="",
@@ -309,24 +313,37 @@ def password_name_to_items(name: str) -> List[afwf.Item]:
         # Since name is always on top, add special functionality to it
         if k == PasswordForm.name.value:
             if PasswordForm.password.value in data:
-                arg = data[PasswordForm.password.value]
+                secure_value = data[PasswordForm.password.value]
             elif SecureNoteForm.notes.value in data:
-                arg = data[SecureNoteForm.notes.value]
+                secure_value = data[SecureNoteForm.notes.value]
             elif DatabaseForm.password.value in data:
-                arg = data[SecureNoteForm.notes.value]
+                secure_value = data[DatabaseForm.notes.value]
             else:
-                arg = v
+                secure_value = v
+            item.subtitle = "hit 'enter' to ENTER the secret"
+            item.text = afwf.Text(
+                largetype="\n".join([
+                    f"{k} = {v}"
+                    for k, v in data.items()
+                ])
+            )
+            item.variables["run_apple_script"] = afwf.VarValueEnum.y.value
+            item.variables["run_apple_script_arg"] = secure_value
+
             item.add_modifier(
                 mod=afwf.ModEnum.cmd.value,
-                subtitle="hit 'Enter' to enter the secrets",
-                arg=arg,
+                subtitle="hit 'CMN + enter' to COPY the secret",
+                arg=secure_value,
             )
-            item.add_modifier(
-                mod=afwf.ModEnum.alt.value,
-                subtitle="hit 'Enter' to copy the secrets",
-                arg=arg,
-            )
-        if k == PasswordForm.url.value:
+            if PasswordForm.url.value in data:
+                item.add_modifier(
+                    mod=afwf.ModEnum.alt.value,
+                    subtitle="hit 'Alt + enter' to OPEN the url",
+                    arg=data[PasswordForm.url.value],
+                )
+
+        elif k == PasswordForm.url.value:
             item.open_url(url=v)
         item_list.append(item)
+
     return item_list

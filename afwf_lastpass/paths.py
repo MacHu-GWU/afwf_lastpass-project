@@ -9,6 +9,7 @@ dir_cache = Path(dir_alfred_workflow, ".cache")
 dir_name_index = Path(dir_alfred_workflow, "name_index")
 path_name_txt = Path(dir_alfred_workflow, "name.txt")
 path_lastpass_cli = Path(dir_alfred_workflow, "lastpass_cli")
+path_log_txt = Path(dir_alfred_workflow, "log.txt")
 
 dir_here = Path.dir_here(__file__)
 dir_project_root = dir_here.parent
