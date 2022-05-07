@@ -1,37 +1,40 @@
 # -*- coding: utf-8 -*-
 
 import pytest
+import json
+from rich import print as jprint
 from afwf_lastpass import lpass
 from afwf_lastpass.paths import path_name_txt_for_test
 
-output = """
-Google/Email/Alice gmail
-Username: alice@gmail.com
-Password: 1a2b3c
-URL: https://mail.google.com/
-Notes: This is Alice's gmail
+sample_password_data = {
+    "id": "123456789",
+    "name": "Alice Gmail",
+    "fullname": "Folder/Alice Gmail",
+    "username": "alice@gmail.com",
+    "password": "1a2b3c",
+    "last_modified_gmt": "",
+    "last_touch": "",
+    "group": "Email",
+    "url": "https://accounts.google.com/servicelogin",
+    "note": "this is Alice's gmail",
+}
 
-My Comment: It's my favorite email
 
-    1. a
-    2. b
-    3. c
-""".strip()
-
-
-def test_parse_output():
-    data = lpass.parse_output(name="alice gmail", output=output)
-    note = data.pop("Notes")
+def test_parse_lpass_show_output_json():
+    output = json.dumps([sample_password_data, ])
+    data = lpass.parse_lpass_show_output_json(output=output)
     assert data == {
-        'name': 'alice gmail',
-        'folder': 'Google/Email/Alice gmail',
-        'fullname': 'Google/Email/Alice gmail',
-        'Username': 'alice@gmail.com',
-        'Password': '1a2b3c',
-        'URL': 'https://mail.google.com/',
+        "id": "123456789",
+        "name": "Alice Gmail",
+        "fullname": "Folder/Alice Gmail",
+        "username": "alice@gmail.com",
+        "password": "1a2b3c",
+        "last_modified_gmt": "",
+        "last_touch": "",
+        "group": "Email",
+        "url": "https://accounts.google.com/servicelogin",
+        "note": "this is Alice's gmail",
     }
-    assert "My Comment: It's my favorite email"
-    assert "    1. a" in note
 
 
 def test_parse_name_txt():
@@ -42,6 +45,11 @@ def test_parse_name_txt():
         "bob outlook email",
         "cathy yahoo email",
     ]
+
+
+def test_password_to_item():
+    items = lpass.password_data_to_items(sample_password_data)
+    assert items[0].variables["field"] == "name"
 
 
 if __name__ == "__main__":
