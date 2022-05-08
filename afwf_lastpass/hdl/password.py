@@ -13,7 +13,7 @@ from ..fuzzy_filter import FuzzyObjectSearch
 from ..logger import logger
 from ..paths import (
     path_lpass_username, lasspass_cli,
-    dir_alfred_workflow_name_index,
+    path_alfred_workflow_name_index_write_lock,
     path_alfred_workflow_name_txt,
     python_interpreter,
     path_user_workflow_main_py,
@@ -75,6 +75,7 @@ class Handler(afwf.Handler):
                     name = doc["name"]
                     item = afwf.Item(
                         title=name,
+                        subtitle=name,
                         autocomplete=name + "@@",
                         arg=name,
                         icon=afwf.Icon.from_image_file(images.lastpass),
@@ -123,7 +124,7 @@ class Handler(afwf.Handler):
         if not path_lpass_username.exists():
             return self.login_lastpass_cli(query)
 
-        if not dir_alfred_workflow_name_index.exists():
+        if not path_alfred_workflow_name_index_write_lock.exists():
             return self.create_index()
 
         query = query.strip()

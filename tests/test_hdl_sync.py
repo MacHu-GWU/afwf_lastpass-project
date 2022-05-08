@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from afwf_lastpass.hdl.login import handler
+from afwf_lastpass.hdl.sync import handler
 
 
 def test_handler():

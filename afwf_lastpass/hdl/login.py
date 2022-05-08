@@ -3,24 +3,32 @@
 import attr
 import afwf
 
-from ..paths import lasspass_cli, path_alfred_workflow_name_txt
+from ..paths import (
+    lasspass_cli, path_alfred_workflow_name_txt,
+    python_interpreter, path_user_workflow_main_py,
+)
 from .. import images
+
 
 @attr.define
 class Handler(afwf.Handler):
-    def lower_level_api(self, query: str = None) -> afwf.ScriptFilter:
+    def lower_level_api(self, query: str) -> afwf.ScriptFilter:
         """
         """
         sf = afwf.ScriptFilter()
-        cmd = f"{lasspass_cli} export --sync=now --fields=name > {path_alfred_workflow_name_txt.abspath}"
-        item = afwf.Item(
-            title="Re-Login lastpass",
-            subtitle="Hit enter to re-login lastpass",
-            arg=cmd,
-            icon=afwf.Icon.from_image_file(images.signin)
-        )
-        item.variables["terminal_command"] = afwf.VarValueEnum.y.value
-        item.variables["terminal_command_arg"] = cmd
+        if len(query):
+            item = afwf.Item(
+                title=f"Enter username = '{query}' to login",
+                icon=afwf.Icon.from_image_file(images.signin),
+            )
+            cmd = f"{lasspass_cli} login \"{query}\""
+            item.variables["terminal_command"] = afwf.VarValueEnum.y.value
+            item.variables["terminal_command_arg"] = cmd
+        else:
+            item = afwf.Item(
+                title=f"Enter username to login",
+                icon=afwf.Icon.from_image_file(images.signin),
+            )
         sf.items.append(item)
         return sf
 
