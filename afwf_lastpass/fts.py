@@ -13,7 +13,7 @@ from whoosh.index import open_dir, create_in, exists_in, FileIndex
 from whoosh.fields import SchemaClass, TEXT, NGRAM, STORED
 from whoosh.qparser import MultifieldParser
 
-from .paths import dir_name_index
+from .paths import dir_alfred_workflow_name_index
 from .cache import cache
 
 
@@ -44,7 +44,7 @@ password_name_schema = PasswordNameSchema()
 
 
 def rebuild_name_index(
-    dir_index: Path = dir_name_index,
+    dir_index: Path = dir_alfred_workflow_name_index,
     name_list: List[str] = None,
 ):
     """
@@ -53,7 +53,7 @@ def rebuild_name_index(
     if name_list is None:
         return
 
-    dir_name_index.remove_if_exists()
+    dir_alfred_workflow_name_index.remove_if_exists()
     index = get_index(dir_index, password_name_schema, reset=True)
     with index.writer(limitmb=128) as writer:
         for name in name_list:
@@ -66,7 +66,7 @@ def rebuild_name_index(
 
 def search_name(
     q: str,
-    dir_index: Path = dir_name_index,
+    dir_index: Path = dir_alfred_workflow_name_index,
 ) -> List[dict]:
     index = get_index(dir_index, password_name_schema, reset=False)
     docs = list()

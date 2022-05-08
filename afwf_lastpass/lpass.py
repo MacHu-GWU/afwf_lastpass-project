@@ -10,7 +10,7 @@ from pathlib_mate import Path
 
 from .paths import (
     lasspass_cli,
-    path_name_txt,
+    path_alfred_workflow_name_txt,
 )
 from . import images
 
@@ -72,18 +72,19 @@ def show(name: str) -> dict:
     return parse_lpass_show_output_json(output)
 
 
-def parse_name_txt(path: Path = path_name_txt) -> List[str]:
+def parse_name_txt(path: Path = path_alfred_workflow_name_txt) -> List[str]:
     """
     ``name.txt`` is a cache file locate at ``~/.alfred-afwf_lastpass/name.txt``.
     It stores the list of all lastpass item name for full text search.
 
     This function can parse the file and returns the name list.
     """
-    return list(set([
+    lines = [
         line.strip()
         for line in path.read_text().strip().split("\n")
         if line.strip()
-    ]))
+    ]
+    return list(set(lines[1:]))
 
 
 def password_data_to_items(data: dict) -> List[afwf.Item]:
@@ -132,7 +133,8 @@ def password_data_to_items(data: dict) -> List[afwf.Item]:
             )
 
             # hit 'Alt + enter' to OPEN the url
-            if data.get(PasswordForm.url.value, ""):
+            url = data.get(PasswordForm.url.value, "")
+            if url and url != "http://sn":
                 item.add_modifier(
                     mod=afwf.ModEnum.alt.value,
                     subtitle="hit 'Alt + enter' to OPEN the url",

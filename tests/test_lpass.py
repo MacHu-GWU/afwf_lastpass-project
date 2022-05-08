@@ -4,7 +4,7 @@ import pytest
 import json
 from rich import print as jprint
 from afwf_lastpass import lpass
-from afwf_lastpass.paths import path_name_txt_for_test
+from afwf_lastpass.paths import path_tests_name_txt
 
 sample_password_data = {
     "id": "123456789",
@@ -38,7 +38,7 @@ def test_parse_lpass_show_output_json():
 
 
 def test_parse_name_txt():
-    l = lpass.parse_name_txt(path_name_txt_for_test)
+    l = lpass.parse_name_txt(path_tests_name_txt)
     l.sort()
     assert l == [
         "alice gmail",

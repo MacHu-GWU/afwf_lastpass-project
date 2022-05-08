@@ -3,7 +3,7 @@
 import attr
 import afwf
 
-from ..paths import lasspass_cli, path_name_txt
+from ..paths import lasspass_cli, path_alfred_workflow_name_txt
 from .. import images
 
 @attr.define
@@ -12,7 +12,7 @@ class Handler(afwf.Handler):
         """
         """
         sf = afwf.ScriptFilter()
-        cmd = f"{lasspass_cli} export --sync=now --fields=name > {path_name_txt.abspath}"
+        cmd = f"{lasspass_cli} export --sync=now --fields=name > {path_alfred_workflow_name_txt.abspath}"
         item = afwf.Item(
             title="Re-Login lastpass",
             subtitle="Hit enter to re-login lastpass",

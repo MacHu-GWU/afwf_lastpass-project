@@ -5,7 +5,7 @@ import attr
 import afwf
 
 from .. import images
-from ..paths import path_name_txt, lasspass_cli
+from ..paths import path_alfred_workflow_name_txt, lasspass_cli
 
 
 @attr.define
@@ -14,7 +14,7 @@ class Handler(afwf.Handler):
         """
         """
         sf = afwf.ScriptFilter()
-        if path_name_txt.exists():
+        if path_alfred_workflow_name_txt.exists():
             cmd = f"{sys.executable} main.py 'build_index_action no_query'"
             item = afwf.Item(
                 title="Re-build Index for Lastpass Alfred Workflow",
@@ -26,7 +26,7 @@ class Handler(afwf.Handler):
             item.variables["run_bash_script_arg"] = cmd
             sf.items.append(item)
         else:
-            cmd = f"{lasspass_cli} export --sync=now --fields=name > {path_name_txt.abspath}"
+            cmd = f"{lasspass_cli} export --sync=now --fields=name > {path_alfred_workflow_name_txt.abspath}"
             item = afwf.Item(
                 title="name.txt file not found!",
                 subtitle="Hit enter to create name.txt",
